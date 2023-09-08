@@ -20,7 +20,7 @@ services:
         ipv4_address: 10.2.0.200
 
   wireguard:
-    depends_on: [unbound, pihole]
+    depends_on: [unbound, pihole, adguard]
     image: linuxserver/wireguard
     container_name: wireguard
     cap_add:
@@ -78,3 +78,19 @@ services:
     networks:
       private_network:
         ipv4_address: 10.2.0.100
+
+  adguard:
+    depends_on: [unbound]
+    container_name: adguard
+    image: adguard/adguardhome
+    restart: unless-stopped
+    hostname: adguardhome
+    dns:
+      - 127.0.0.1
+      - 10.2.0.200
+    volumes:
+      - "./adguardhome/work:/opt/adguardhome/work"
+      - "./adguardhome/conf:/opt/adguardhome/conf"
+    networks:
+      private_network:
+        ipv4_address: 10.2.0.150
